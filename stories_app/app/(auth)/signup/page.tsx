@@ -18,22 +18,19 @@ export default function SignupPage() {
       return setErrorMsg("Passwords do not match");
     }
 
-    // 1. Create auth user
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) return setErrorMsg(error.message);
 
-    // 2. Fetch the user (THIS FIXES YOUR ERROR)
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) return setErrorMsg("User not found after signup");
 
-    // 3. Create profile row
     await supabase.from("profiles").insert({
       id: user.id,
       username: email.split("@")[0],

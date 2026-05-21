@@ -1,47 +1,63 @@
-import { createServerSupabase } from "@/lib/supabaseServer";
-import Image from "next/image";
+"use client";
 
-export default async function StoriesPage() {
-  const supabase = createServerSupabase();
+import {
+  Box,
+  Heading,
+  Text,
+  Image,
+  Grid,
+  Card,
+  CardBody,
+} from "@chakra-ui/react";
+import { stories } from "@/lib/fakeStories";
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const { data: stories } = await supabase
-    .from("stories")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
+export default function StoriesPage() {
   return (
-    <main className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">My Stories</h1>
+    <Box maxW="1200px" mx="auto" px={6} py={12}>
+      <Heading mb={10} fontSize="3xl" color="gray.100">
+        My Stories
+      </Heading>
 
-      <div className="flex flex-col gap-6">
-        {stories?.map((story) => (
-          <div key={story.id} className="border p-4 rounded">
-            <h2 className="text-xl font-semibold">{story.title}</h2>
-            <p className="text-gray-600">{story.description}</p>
+      <Grid
+        templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
+        gap={10}
+      >
+        {stories.map((story) => (
+          <Card
+            key={story.id}
+            bg="gray.900"
+            border="1px solid"
+            borderColor="gray.700"
+            rounded="xl"
+            overflow="hidden"
+            shadow="lg"
+            _hover={{ transform: "translateY(-4px)", shadow: "xl" }}
+            transition="0.2s ease"
+          >
+            <Image
+              src={story.photo_url}
+              alt={story.title}
+              objectFit="cover"
+              h="220px"
+              w="100%"
+            />
 
-            {story.photo_url && (
-              <Image
-                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/stories/${story.photo_url}`}
-                alt={story.title}
-                width={600}
-                height={400}
-                className="rounded mt-4"
-              />
-            )}
+            <CardBody>
+              <Heading fontSize="xl" color="gray.100">
+                {story.title}
+              </Heading>
 
-            <p className="text-sm text-gray-500 mt-2">
-              {story.city}, {story.country} — {story.story_date}
-            </p>
-          </div>
+              <Text mt={2} color="gray.400" truncate>
+                {story.description}
+              </Text>
+
+              <Text mt={4} fontSize="sm" color="gray.500">
+                {story.city}, {story.country} — {story.story_date}
+              </Text>
+            </CardBody>
+          </Card>
         ))}
-      </div>
-    </main>
+      </Grid>
+    </Box>
   );
 }

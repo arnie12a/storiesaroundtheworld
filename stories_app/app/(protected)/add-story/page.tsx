@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { stories } from "@/lib/fakeStories";
 import { useRouter } from "next/navigation";
 
 export default function AddStoryPage() {
@@ -12,45 +12,20 @@ export default function AddStoryPage() {
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [storyDate, setStoryDate] = useState("");
-  const [photo, setPhoto] = useState<File | null>(null);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) return setErrorMsg("Not logged in");
-
-    let photo_url = null;
-
-    // Upload photo to Supabase Storage
-    if (photo) {
-      const fileName = `${user.id}-${Date.now()}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("stories")
-        .upload(fileName, photo);
-
-      if (uploadError) return setErrorMsg(uploadError.message);
-
-      photo_url = uploadData.path;
-    }
-
-    // Insert into stories table
-    const { error } = await supabase.from("stories").insert({
-      user_id: user.id,
+    stories.push({
+      id: crypto.randomUUID(),
       title,
       description,
       country,
       city,
       story_date: storyDate,
-      photo_url,
-      is_favorite: false,
+      photo_url: photoUrl || "/sample/default.jpg",
     });
-
-    if (error) return setErrorMsg(error.message);
 
     router.push("/stories");
   }
@@ -96,11 +71,11 @@ export default function AddStoryPage() {
         />
 
         <input
-          type="file"
-          onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
+          className="border p-2 rounded"
+          placeholder="Photo URL (optional)"
+          value={photoUrl}
+          onChange={(e) => setPhotoUrl(e.target.value)}
         />
-
-        {errorMsg && <p className="text-red-500">{errorMsg}</p>}
 
         <button className="bg-black text-white p-2 rounded">
           Submit Story
