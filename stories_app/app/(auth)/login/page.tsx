@@ -20,7 +20,7 @@ export default function LoginPage() {
 
     if (error) return setErrorMsg(error.message);
 
-    router.push("/profile");
+    router.push("/home");
   }
 
   return (
