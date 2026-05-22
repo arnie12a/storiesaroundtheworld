@@ -1,63 +1,44 @@
-"use client";
-
-import {
-  Box,
-  Heading,
-  Text,
-  Image,
-  Grid,
-  Card,
-  CardBody,
-} from "@chakra-ui/react";
+import Image from "next/image";
 import { stories } from "@/lib/fakeStories";
 
 export default function StoriesPage() {
   return (
-    <Box maxW="1200px" mx="auto" px={6} py={12}>
-      <Heading mb={10} fontSize="3xl" color="gray.100">
+    <main className="px-6 py-12 max-w-6xl mx-auto">
+      <h1 className="text-4xl font-bold mb-10 tracking-tight text-stone-100">
         My Stories
-      </Heading>
+      </h1>
 
-      <Grid
-        templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
-        gap={10}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
         {stories.map((story) => (
-          <Card
+          <div
             key={story.id}
-            bg="gray.900"
-            border="1px solid"
-            borderColor="gray.700"
-            rounded="xl"
-            overflow="hidden"
-            shadow="lg"
-            _hover={{ transform: "translateY(-4px)", shadow: "xl" }}
-            transition="0.2s ease"
+            className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition hover:-translate-y-1"
           >
-            <Image
-              src={story.photo_url}
-              alt={story.title}
-              objectFit="cover"
-              h="220px"
-              w="100%"
-            />
+            <div className="relative h-56 w-full">
+              <Image
+                src={story.photo_url}
+                alt={story.title}
+                fill
+                className="object-cover"
+              />
+            </div>
 
-            <CardBody>
-              <Heading fontSize="xl" color="gray.100">
+            <div className="p-5">
+              <h2 className="text-xl font-semibold text-stone-100">
                 {story.title}
-              </Heading>
+              </h2>
 
-              <Text mt={2} color="gray.400" truncate>
+              <p className="text-stone-400 text-sm mt-2 line-clamp-3">
                 {story.description}
-              </Text>
+              </p>
 
-              <Text mt={4} fontSize="sm" color="gray.500">
+              <p className="text-xs text-stone-500 mt-4">
                 {story.city}, {story.country} — {story.story_date}
-              </Text>
-            </CardBody>
-          </Card>
+              </p>
+            </div>
+          </div>
         ))}
-      </Grid>
-    </Box>
+      </div>
+    </main>
   );
 }
