@@ -15,6 +15,12 @@ export function AuthProvider({ children }) {
       if (session?.user) fetchProfile(session.user.id);
       else setLoading(false);
     });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Session:', session);
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else setLoading(false);
+    });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
